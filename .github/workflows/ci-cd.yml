@@ -24,11 +24,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-test.txt
 
+      - name: Inject Secrets for Docker
+        run: |
+          # Create the .env file that your docker-compose requires
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > ./maintenance-service/.env
+
+      - name: Start Microservices
+        run: |
+          docker compose up -d
+          echo "Waiting 15 seconds for RabbitMQ and APIs to boot up completely..."
+          sleep 15
+
       - name: Run Pytest
-        env:
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          MAINTENANCE_API_KEY: ${{ secrets.MAINTENANCE_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           pytest tests/ -v
 
