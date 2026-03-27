@@ -1,0 +1,53 @@
+name: AutoMesh CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Run Automated Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-test.txt
+
+      - name: Run Pytest
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          MAINTENANCE_API_KEY: ${{ secrets.MAINTENANCE_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          pytest tests/ -v
+
+  build:
+    name: Build Docker Images
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build API Gateway
+        run: docker build -t automesh/api-gateway:latest ./api-gateway
+
+      - name: Build Auth Service
+        run: docker build -t automesh/auth-service:latest ./auth-service
+
+      - name: Build Maintenance Service
+        run: docker build -t automesh/maintenance-service:latest ./maintenance-service
+
+      - name: Build Notification Service
+        run: docker build -t automesh/notification-service:latest ./notification-service

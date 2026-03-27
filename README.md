@@ -125,3 +125,10 @@ docker compose down
 - **Pika** — Python RabbitMQ client
 - **Docker & Docker Compose** — containerization
 - **Uvicorn** — ASGI server
+
+## Kubernetes Deployment (HW2 Update)
+This project has been upgraded to run on Kubernetes.
+1. Enable Kubernetes in Docker Desktop.
+2. Build the local images: `docker build -t automesh/api-gateway:latest ./api-gateway` (repeat for all services).
+3. Deploy the stack: `kubectl apply -f k8s/automesh-stack.yaml`
+4. Check status: `kubectl get pods`
