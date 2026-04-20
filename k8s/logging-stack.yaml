@@ -66,7 +66,7 @@ kind: Service
 metadata:
   name: kibana
 spec:
-  type: LoadBalancer # Exposes Kibana to your Mac's localhost:5601
+  type: LoadBalancer 
   selector:
     app: kibana
   ports:

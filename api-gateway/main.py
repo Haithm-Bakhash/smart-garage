@@ -25,7 +25,7 @@ app.add_middleware(
 )
 
 @app.post("/login")
-@limiter.limit("5/minute") # Protect login from brute-force password guessing
+@limiter.limit("100/minute") # Protect login from brute-force password guessing
 async def login(request: Request):
     data = await request.json()
     async with httpx.AsyncClient() as client:
@@ -35,7 +35,7 @@ async def login(request: Request):
     return response.json()
 
 @app.post("/predict")
-@limiter.limit("10/minute") # Stop users from spamming the expensive AI endpoint
+@limiter.limit("100/minute") # Stop users from spamming the expensive AI endpoint
 async def predict_maintenance(request: Request, authorization: str = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing or invalid token.")
