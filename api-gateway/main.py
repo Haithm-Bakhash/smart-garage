@@ -1,8 +1,12 @@
 from fastapi import FastAPI, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 import httpx
 
 app = FastAPI(title="API Gateway")
+
+# Expose the /metrics endpoint for Prometheus
+Instrumentator().instrument(app).expose(app)
 
 app.add_middleware(
     CORSMiddleware,

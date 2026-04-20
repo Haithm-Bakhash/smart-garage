@@ -1,7 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI(title="Auth Service", description="Handles user login and tokens.")
+
+# Expose the /metrics endpoint for Prometheus
+Instrumentator().instrument(app).expose(app)
 
 # The data we expect when someone logs in
 class LoginRequest(BaseModel):
