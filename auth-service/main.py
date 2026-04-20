@@ -1,28 +1,45 @@
+import os
+import jwt
+import datetime
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from prometheus_fastapi_instrumentator import Instrumentator
 
-app = FastAPI(title="Auth Service", description="Handles user login and tokens.")
+app = FastAPI(title="Auth Service - Secure Edition", description="Handles secure JWT generation.")
 
-# Expose the /metrics endpoint for Prometheus
 Instrumentator().instrument(app).expose(app)
 
-# The data we expect when someone logs in
+# Fetch the secret injected by our Kubernetes Secret!
+JWT_SECRET = os.getenv("JWT_SECRET", "fallback-insecure-secret")
+ALGORITHM = "HS256"
+
 class LoginRequest(BaseModel):
     username: str
     password: str
 
 @app.post("/api/v1/auth/login")
 def login(request: LoginRequest):
-    # Requirement 4: Basic Authentication
+    
     if request.username == "haithm" and request.password == "smartgarage":
-        return {"access_token": "super-secret-jwt-token-123", "token_type": "bearer"}
+        # Generate a real JWT valid for 1 hour
+        expiration = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        payload = {
+            "sub": request.username,
+            "exp": expiration
+        }
+        token = jwt.encode(payload, JWT_SECRET, algorithm=ALGORITHM)
+        
+        return {"access_token": token, "token_type": "bearer"}
     
     raise HTTPException(status_code=401, detail="Wrong username or password")
 
 @app.get("/api/v1/auth/verify/{token}")
 def verify_token(token: str):
-    if token == "super-secret-jwt-token-123":
-        return {"valid": True, "user": "haithm"}
-    
-    raise HTTPException(status_code=401, detail="Invalid or expired token")
+    try:
+        # Cryptographically verify the token hasn't been tampered with
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
+        return {"valid": True, "user": payload.get("sub")}
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
