@@ -36,7 +36,7 @@ def login(request: LoginRequest):
 @app.get("/api/v1/auth/verify/{token}")
 def verify_token(token: str):
     try:
-        # Cryptographically verify the token hasn't been tampered with
+        
         payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
         return {"valid": True, "user": payload.get("sub")}
     except jwt.ExpiredSignatureError:

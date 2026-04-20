@@ -79,7 +79,7 @@ kind: Service
 metadata:
   name: grafana
 spec:
-  type: LoadBalancer # Exposes Grafana to your Mac's localhost:3000
+  type: LoadBalancer 
   selector:
     app: grafana
   ports:

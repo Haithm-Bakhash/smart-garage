@@ -30,13 +30,13 @@ services:
     ports:
       - "8002:8000"
     env_file:
-      - ./maintenance-service/.env        # ← injects GEMINI_API_KEY
+      - ./maintenance-service/.env        # injects GEMINI_API_KEY
     depends_on:
       rabbitmq:
-        condition: service_healthy        # ← waits for real readiness
+        condition: service_healthy        
 
   notification-service:
     build: ./notification-service
     depends_on:
       rabbitmq:
-        condition: service_healthy        # ← same fix here
+        condition: service_healthy        

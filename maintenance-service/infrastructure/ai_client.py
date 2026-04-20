@@ -13,7 +13,7 @@ if api_key:
 else:
     client = None
 
-# --- NEW: In-Memory Cache Dictionary ---
+
 prediction_cache = {}
 
 def get_ai_prediction(car: CarRequest):
