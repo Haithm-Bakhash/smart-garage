@@ -1,71 +1,76 @@
 import os
 import json
-from google import genai
+from groq import Groq
 from domain.models import CarRequest
 from dotenv import load_dotenv
 
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("GROQ_API_KEY")
 
-# Only initialize the client if we have a key
 if api_key:
-    client = genai.Client(api_key=api_key)
+    client = Groq(api_key=api_key)
 else:
     client = None
-
 
 prediction_cache = {}
 
 def get_ai_prediction(car: CarRequest):
-    # 1. Create a unique ID for this specific vehicle profile
     cache_key = f"{car.year}_{car.make}_{car.model}_{car.mileage}"
     
-    # 2. Check the cache FIRST (This fulfills your report's claim!)
     if cache_key in prediction_cache:
         print(f"CACHE HIT: Returning saved AI prediction for {cache_key}")
         return prediction_cache[cache_key]
 
-    prompt = f"Expert mechanic analysis: {car.year} {car.make} {car.model}, {car.mileage} miles. Return JSON with 'issues', 'cost', and 'note'."
-    
-    result_data = None
+    prompt = f"""
+    Act as a Master Auto Mechanic and Automotive Data Expert.
+    I need a deep, highly specific diagnostic prediction for this exact vehicle:
+    - Year: {car.year}
+    - Make: {car.make}
+    - Model: {car.model}
+    - Current Mileage: {car.mileage} miles
 
-    # 3. Try to use the real AI
-    if client:
-        try:
-            response = client.models.generate_content(
-                model="gemini-2.0-flash", 
-                contents=prompt
-            )
-            clean_json = response.text.strip().removeprefix("```json").removesuffix("```").strip()
-            result_data = json.loads(clean_json)
-        except Exception as e:
-            print(f"AI API Blocked or Failed: {e}. Switching to Fallback System.")
-    
-    # 4. Fallback System (if AI fails)
-    if not result_data:
-        issues = []
-        cost = 0
-        note = f"Standard automated review for {car.make} {car.model}."
+    Based on historical reliability data, known manufacturer recalls, and the specific mileage milestone of this car, provide a realistic maintenance prediction. 
+    Do NOT give generic advice (like 'check oil'). You MUST mention specific engine types, transmissions, or common structural failures historically known for the {car.year} {car.model}.
 
-        if car.mileage > 100000:
-            issues = ["Replace timing belt", "Check transmission fluid", "Inspect suspension"]
-            cost = 850
-            note = f"At {car.mileage} miles, preventative maintenance is recommended for {car.make}s."
-        elif car.mileage > 50000:
-            issues = ["Replace brake pads", "Perform wheel alignment", "Replace cabin filter"]
-            cost = 320
-            note = f"Your {car.model} is at a common milestone for brake maintenance."
-        else:
-            issues = ["Standard oil change", "Tire rotation", "Check wiper blades"]
-            cost = 120
-            note = f"Your {car.year} vehicle is relatively new. Keep up with routine checkups!"
+    Return ONLY a raw JSON object (no markdown, no backticks) in this exact format:
+    {{
+        "issues": ["Highly specific issue 1", "Highly specific issue 2"],
+        "cost": 450,
+        "note": "A personalized, expert explanation referencing the specific car's history and why these parts fail at this mileage."
+    }}
+    """
 
-        result_data = {
-            "issues": issues,
-            "cost": cost,
-            "note": note
+    if not client:
+        return {
+            "issues": ["CRITICAL ERROR: NO API KEY"],
+            "cost": 0,
+            "note": "The GROQ_API_KEY is missing from the environment variables."
         }
-    
-    # 5. Save the final result to the cache before returning it
-    prediction_cache[cache_key] = result_data
-    return result_data
+
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=512
+        )
+
+        raw_text = response.choices[0].message.content.strip()
+        if raw_text.startswith("```json"):
+            raw_text = raw_text[7:]
+        raw_text = raw_text.strip("` \n")
+
+        result_data = json.loads(raw_text)
+        print(f"AI SUCCESS: Master mechanic analyzed {cache_key}")
+
+        prediction_cache[cache_key] = result_data
+        return result_data
+
+    except Exception as e:
+        error_message = str(e)
+        print(f"AI FAILURE: {error_message}")
+
+        return {
+            "issues": ["AI GENERATION FAILED"],
+            "cost": 9999,
+            "note": f"The Groq API refused the connection or returned bad data. Exact Error: {error_message}"
+        }
