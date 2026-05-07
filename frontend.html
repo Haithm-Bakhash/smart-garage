@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Garage</title>
+  <title>Smart Garage - Login</title>
   <style>
-
-*, *::before, *::after {
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #f5f5f0;
@@ -21,24 +19,20 @@
       justify-content: center;
       padding: 2rem;
     }
-
     .container {
       width: 100%;
       max-width: 480px;
     }
-
     .header h1 {
       font-size: 22px;
       font-weight: 600;
       margin-bottom: 4px;
     }
-
     .header .subtitle {
       font-size: 14px;
       color: #888;
       margin-bottom: 1.5rem;
     }
-
     .badge {
       background: #E1F5EE;
       color: #0F6E56;
@@ -48,15 +42,14 @@
       border-radius: 6px;
       margin-left: 8px;
     }
-
     .card {
       background: white;
       border: 1px solid #e8e8e8;
       border-radius: 12px;
       padding: 1.25rem;
       margin-bottom: 1rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
-
     .card-title {
       font-size: 11px;
       font-weight: 600;
@@ -65,142 +58,85 @@
       letter-spacing: 0.07em;
       margin-bottom: 1rem;
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 5px;
-    }
-
+    .field { margin-bottom: 12px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field label { display: block; font-size: 13px; color: #666; margin-bottom: 5px; }
     .field input {
-      width: 100%;
-      height: 38px;
-      padding: 0 10px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      width: 100%; height: 38px; padding: 0 10px; border: 1px solid #ddd;
+      border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.15s, box-shadow 0.15s;
     }
-
-    .field input:focus {
-      border-color: #1D9E75;
-      box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.1);
+    .field input:focus { border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.1); }
+    .btn-main {
+      width: 100%; height: 42px; margin-top: 1rem; background: #1D9E75; color: white;
+      border: none; border-radius: 8px; font-size: 15px; font-weight: 500;
+      cursor: pointer; transition: background 0.15s;
     }
-
-    .btn-analyze {
-      width: 100%;
-      height: 42px;
-      margin-top: 1rem;
-      background: #1D9E75;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    .btn-analyze:hover  { background: #0F6E56; }
-    .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; }
-
+    .btn-main:hover  { background: #0F6E56; }
+    .btn-main:disabled { opacity: 0.5; cursor: not-allowed; }
     .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      border-top-color: white;
-      border-radius: 50%;
-      vertical-align: middle;
-      margin-right: 6px;
+      display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: transparent; border-radius: 50%; vertical-align: middle; margin-right: 6px;
       animation: spin 0.7s linear infinite;
     }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
+    @keyframes spin { to { transform: rotate(360deg); } }
     .error-banner {
-      display: none;
-      padding: 12px;
-      background: #FEE;
-      border-radius: 8px;
-      font-size: 13px;
-      color: #c00;
-      margin-bottom: 1rem;
+      display: none; padding: 12px; background: #FEE; border-radius: 8px;
+      font-size: 13px; color: #c00; margin-bottom: 1rem;
     }
-
     .error-banner.show { display: block; }
-
+    .hidden { display: none !important; }
     .result-card { display: none; }
     .result-card.show { display: block; }
-
-    .issue-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    .issue-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
     .issue-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      background: #f9f9f7;
-      border-radius: 8px;
-      font-size: 14px;
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      background: #f9f9f7; border-radius: 8px; font-size: 14px;
     }
-
-    .issue-dot {
-      width: 8px;
-      height: 8px;
-      flex-shrink: 0;
-      border-radius: 50%;
-      background: #EF9F27;
-    }
-
+    .issue-dot { width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: #EF9F27; }
     .cost-row {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid #eee;
+      display: flex; align-items: baseline; gap: 8px; margin-top: 1rem;
+      padding-top: 1rem; border-top: 1px solid #eee;
     }
-
     .cost-label { font-size: 13px; color: #888; }
     .cost-value { font-size: 26px; font-weight: 600; }
-
     .ai-notes {
-      margin-top: 1rem;
-      padding: 12px;
-      background: #E1F5EE;
-      border-radius: 8px;
-      font-size: 13px;
-      color: #0F6E56;
-      line-height: 1.6;
+      margin-top: 1rem; padding: 12px; background: #E1F5EE;
+      border-radius: 8px; font-size: 13px; color: #0F6E56; line-height: 1.6;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-
+  <div class="container" id="loginView">
     <header class="header">
-      <h1>Smart Garage <span class="badge">live</span></h1>
+      <h1>Smart Garage <span class="badge">Secure</span></h1>
+      <p class="subtitle">Mechanic Portal Login</p>
+    </header>
+
+    <div class="error-banner" id="loginError"></div>
+
+    <div class="card">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" type="text" value="admin" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" value="admin" />
+      </div>
+      <button class="btn-main" id="loginBtn" onclick="handleLogin()">
+        Sign In
+      </button>
+    </div>
+  </div>
+
+  <div class="container hidden" id="dashboardView">
+    <header class="header">
+      <h1>Smart Garage <span class="badge">Live</span></h1>
       <p class="subtitle">AI-powered vehicle maintenance predictor</p>
     </header>
 
-    <div class="error-banner" id="errorBanner"></div>
+    <div class="error-banner" id="dashError"></div>
 
     <div class="card">
       <p class="card-title">Vehicle Details</p>
@@ -222,7 +158,7 @@
           <input id="mileage" type="number" value="95000" />
         </div>
       </div>
-      <button class="btn-analyze" id="analyzeBtn" onclick="analyzeVehicle()">
+      <button class="btn-main" id="analyzeBtn" onclick="analyzeVehicle()">
         Analyze Vehicle
       </button>
     </div>
@@ -236,108 +172,117 @@
       </div>
       <div class="ai-notes" id="aiNotes"></div>
     </div>
-
   </div>
 
   <script>
+    const API_BASE = "http://localhost:8080";
+    let jwtToken = null;
 
-    const API_BASE    = "http://localhost:8080";
-    const CREDENTIALS = { username: "haithm", password: "smartgarage" };
-
-    const analyzeBtn  = document.getElementById("analyzeBtn");
-    const errorBanner = document.getElementById("errorBanner");
-    const resultCard  = document.getElementById("resultCard");
-    const issueList   = document.getElementById("issueList");
+    const loginView = document.getElementById("loginView");
+    const dashboardView = document.getElementById("dashboardView");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginError = document.getElementById("loginError");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const dashError = document.getElementById("dashError");
+    const resultCard = document.getElementById("resultCard");
+    const issueList = document.getElementById("issueList");
     const estimatedCost = document.getElementById("estimatedCost");
-    const aiNotes     = document.getElementById("aiNotes");
+    const aiNotes = document.getElementById("aiNotes");
 
+    function setLoginLoading(isLoading) {
+      loginBtn.disabled = isLoading;
+      loginBtn.innerHTML = isLoading ? '<span class="spinner"></span>Signing In...' : "Sign In";
+    }
 
-    function setLoading(isLoading) {
+    function setAnalyzeLoading(isLoading) {
       analyzeBtn.disabled = isLoading;
-      analyzeBtn.innerHTML = isLoading
-        ? '<span class="spinner"></span>Analyzing...'
-        : "Analyze Vehicle";
+      analyzeBtn.innerHTML = isLoading ? '<span class="spinner"></span>Analyzing...' : "Analyze Vehicle";
     }
 
-    function showError(message) {
-      errorBanner.textContent = "Could not connect: " + message;
-      errorBanner.classList.add("show");
+    function showLoginError(msg) {
+      loginError.textContent = msg;
+      loginError.classList.add("show");
     }
 
-    function hideError() {
-      errorBanner.classList.remove("show");
+    function showDashError(msg) {
+      dashError.textContent = "Error: " + msg;
+      dashError.classList.add("show");
     }
 
-    function showResults(data) {
-      issueList.innerHTML = data.upcoming_issues
-        .map(issue => `
-          <li class="issue-item">
-            <span class="issue-dot"></span>
-            ${issue}
-          </li>
-        `)
-        .join("");
+    async function handleLogin() {
+      loginError.classList.remove("show");
+      setLoginLoading(true);
 
-      estimatedCost.textContent = "$" + data.estimated_cost_usd.toLocaleString();
-      aiNotes.textContent = data.ai_notes;
-      resultCard.classList.add("show");
-    }
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
 
-    function hideResults() {
-      resultCard.classList.remove("show");
-    }
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: user, password: pass }),
+        });
 
-    async function login() {
-      const res = await fetch(`${API_BASE}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(CREDENTIALS),
-      });
+        if (!res.ok) {
+          throw new Error("Invalid username or password");
+        }
 
-      if (!res.ok) throw new Error(`Authentication failed (Status ${res.status})`);
+        const data = await res.json();
+        jwtToken = data.access_token;
 
-      const data = await res.json();
-      return data.access_token;
-    }
+        loginView.classList.add("hidden");
+        dashboardView.classList.remove("hidden");
 
-    async function predict(token, vehicleData) {
-      const res = await fetch(`${API_BASE}/predict`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(vehicleData),
-      });
-
-      if (!res.ok) throw new Error(`AI Service error (Status ${res.status})`);
-
-      return res.json();
+      } catch (err) {
+        showLoginError(err.message);
+      } finally {
+        setLoginLoading(false);
+      }
     }
 
     async function analyzeVehicle() {
-      hideError();
-      hideResults();
-      setLoading(true);
+      dashError.classList.remove("show");
+      resultCard.classList.remove("show");
+      setAnalyzeLoading(true);
 
       const vehicleData = {
-        make:    document.getElementById("make").value,
-        model:   document.getElementById("model").value,
-        year:    parseInt(document.getElementById("year").value),
+        make: document.getElementById("make").value,
+        model: document.getElementById("model").value,
+        year: parseInt(document.getElementById("year").value),
         mileage: parseInt(document.getElementById("mileage").value),
       };
 
       try {
-        const token = await login();
-        const data  = await predict(token, vehicleData);
-        showResults(data);
+        const res = await fetch(`${API_BASE}/predict`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify(vehicleData),
+        });
+
+        if (!res.ok) {
+          if(res.status === 401) throw new Error("Your session expired. Please refresh the page and log in again.");
+          throw new Error(`AI Service error (Status ${res.status})`);
+        }
+
+        const data = await res.json();
+        
+        issueList.innerHTML = data.upcoming_issues
+          .map(issue => `<li class="issue-item"><span class="issue-dot"></span>${issue}</li>`)
+          .join("");
+
+        estimatedCost.textContent = "$" + data.estimated_cost_usd.toLocaleString();
+        aiNotes.textContent = data.ai_notes;
+        resultCard.classList.add("show");
+
       } catch (err) {
-        showError(err.message);
+        showDashError(err.message);
       } finally {
-        setLoading(false);
+        setAnalyzeLoading(false);
       }
     }
   </script>
-
 </body>
 </html>

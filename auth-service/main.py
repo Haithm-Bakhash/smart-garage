@@ -20,7 +20,7 @@ class LoginRequest(BaseModel):
 @app.post("/api/v1/auth/login")
 def login(request: LoginRequest):
     
-    if request.username == "haithm" and request.password == "smartgarage":
+    if request.username == "admin" and request.password == "admin":
         # Generate a real JWT valid for 1 hour
         expiration = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
         payload = {

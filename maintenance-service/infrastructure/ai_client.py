@@ -21,6 +21,7 @@ def get_ai_prediction(car: CarRequest):
         print(f"CACHE HIT: Returning saved AI prediction for {cache_key}")
         return prediction_cache[cache_key]
 
+    # Updated prompt to prevent the AI from hardcoding 450 or 1200
     prompt = f"""
     Act as a Master Auto Mechanic and Automotive Data Expert.
     I need a deep, highly specific diagnostic prediction for this exact vehicle:
@@ -32,10 +33,13 @@ def get_ai_prediction(car: CarRequest):
     Based on historical reliability data, known manufacturer recalls, and the specific mileage milestone of this car, provide a realistic maintenance prediction. 
     Do NOT give generic advice (like 'check oil'). You MUST mention specific engine types, transmissions, or common structural failures historically known for the {car.year} {car.model}.
 
+    CRITICAL COST INSTRUCTION: Calculate a highly specific estimated repair cost in USD. 
+    Factor in {car.make} parts pricing and labor. Do NOT output a rounded number or default to a generic number.
+
     Return ONLY a raw JSON object (no markdown, no backticks) in this exact format:
     {{
         "issues": ["Highly specific issue 1", "Highly specific issue 2"],
-        "cost": 450,
+        "cost": <integer representing calculated reasonable cost>,
         "note": "A personalized, expert explanation referencing the specific car's history and why these parts fail at this mileage."
     }}
     """
@@ -51,7 +55,8 @@ def get_ai_prediction(car: CarRequest):
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=512
+            max_tokens=512,    # <-- ADDED THE MISSING COMMA HERE
+            temperature=0.7    
         )
 
         raw_text = response.choices[0].message.content.strip()
