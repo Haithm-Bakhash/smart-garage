@@ -4,3 +4,4 @@ venv/**/*.env
 .env
 venv/
 maintenance-service/.env
+secrets.yaml
