@@ -6,6 +6,10 @@ class CarRequest(BaseModel):
     model: str
     year: int
     mileage: int
+    engine_type: str
+    transmission: str
+    driving_environment: str
+    current_symptoms: str
 
 class MaintenanceResponse(BaseModel):
     upcoming_issues: List[str]

@@ -19,7 +19,7 @@ def callback(ch, method, properties, body):
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq'))
 channel = connection.channel()
 
-# Create a mailbox (queue) called 'maintenance_alerts'
+
 channel.queue_declare(queue='maintenance_alerts')
 
 channel.basic_consume(queue='maintenance_alerts', on_message_callback=callback, auto_ack=True)

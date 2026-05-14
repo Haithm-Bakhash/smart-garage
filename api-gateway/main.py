@@ -11,7 +11,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(title="API Gateway - Secure Edition")
 
-# Tell FastAPI to use our Rate Limiter
+
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
@@ -35,7 +35,7 @@ async def login(request: Request):
     return response.json()
 
 @app.post("/predict")
-@limiter.limit("100/minute") # Stop users from spamming the expensive AI endpoint
+@limiter.limit("100/minute") 
 async def predict_maintenance(request: Request, authorization: str = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing or invalid token.")

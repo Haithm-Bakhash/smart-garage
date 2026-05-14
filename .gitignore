@@ -5,3 +5,4 @@ venv/**/*.env
 venv/
 maintenance-service/.env
 secrets.yaml
+k8s/secrets.yaml

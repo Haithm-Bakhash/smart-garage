@@ -9,7 +9,11 @@ async def test_unauthorized_access():
     async with httpx.AsyncClient() as client:
         response = await client.post(
             f"{BASE_URL}/predict",
-            json={"make": "Toyota", "model": "Camry", "year": 2015, "mileage": 95000}
+            json={
+                "make": "Toyota", "model": "Camry", "year": 2015, "mileage": 95000,
+                "engine_type": "2.5L 4-Cylinder", "transmission": "Automatic", 
+                "driving_environment": "City / Stop-and-Go", "current_symptoms": "None"
+            }
         )
     assert response.status_code == 401
 
@@ -31,7 +35,11 @@ async def test_invalid_token():
         response = await client.post(
             f"{BASE_URL}/predict",
             headers=headers,
-            json={"make": "Honda", "model": "Civic", "year": 2020, "mileage": 30000}
+            json={
+                "make": "Honda", "model": "Civic", "year": 2020, "mileage": 30000,
+                "engine_type": "1.5L Turbo", "transmission": "CVT", 
+                "driving_environment": "Mostly Highway", "current_symptoms": "None"
+            }
         )
     assert response.status_code == 401
 
@@ -39,7 +47,7 @@ async def test_invalid_token():
 async def test_login_and_predict():
     """Test the full Auth and AI Prediction flow (Happy Path)."""
     async with httpx.AsyncClient() as client:
-        # 1. Login to get the real JWT token
+        # Login to get the real JWT token
         login_res = await client.post(
             f"{BASE_URL}/login",
             json={"username": "haithm", "password": "smartgarage"}
@@ -48,16 +56,20 @@ async def test_login_and_predict():
         token = login_res.json().get("access_token")
         assert token is not None
 
-        # 2. Use the token to request an AI prediction
+        
         headers = {"Authorization": f"Bearer {token}"}
         predict_res = await client.post(
             f"{BASE_URL}/predict",
             headers=headers,
-            json={"make": "Toyota", "model": "Camry", "year": 2015, "mileage": 95000},
-            timeout=15.0 # Give Gemini some time to respond
+            json={
+                "make": "Toyota", "model": "Camry", "year": 2015, "mileage": 95000,
+                "engine_type": "2.5L 4-Cylinder", "transmission": "Automatic", 
+                "driving_environment": "Extreme Heat", "current_symptoms": "Squeaking brakes"
+            },
+            timeout=15.0 
         )
         
-        # Verify the structure of the AI's response
+      
         assert predict_res.status_code == 200
         data = predict_res.json()
         assert "upcoming_issues" in data

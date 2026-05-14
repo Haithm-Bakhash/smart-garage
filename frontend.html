@@ -61,11 +61,12 @@
     .field { margin-bottom: 12px; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .field label { display: block; font-size: 13px; color: #666; margin-bottom: 5px; }
-    .field input {
+    .field input, .field select {
       width: 100%; height: 38px; padding: 0 10px; border: 1px solid #ddd;
       border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+      background: white;
     }
-    .field input:focus { border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.1); }
+    .field input:focus, .field select:focus { border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.1); }
     .btn-main {
       width: 100%; height: 42px; margin-top: 1rem; background: #1D9E75; color: white;
       border: none; border-radius: 8px; font-size: 15px; font-weight: 500;
@@ -157,7 +158,39 @@
           <label for="mileage">Mileage</label>
           <input id="mileage" type="number" value="95000" />
         </div>
-      </div>
+        
+        <div class="field">
+          <label for="engine">Engine Type</label>
+          <select id="engine">
+            <option value="4-Cylinder">4-Cylinder</option>
+            <option value="V6">V6</option>
+            <option value="V8">V8</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="Electric (EV)">Electric (EV)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="transmission">Transmission</label>
+          <select id="transmission">
+            <option value="Automatic">Automatic</option>
+            <option value="CVT">CVT</option>
+            <option value="Manual">Manual</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="environment">Primary Environment</label>
+          <select id="environment">
+            <option value="City / Stop-and-Go">City / Stop-and-Go</option>
+            <option value="Mostly Highway">Mostly Highway</option>
+            <option value="Extreme Heat">Extreme Heat</option>
+            <option value="Mountain / Hilly">Mountain / Hilly</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="symptoms">Current Symptoms</label>
+          <input id="symptoms" type="text" placeholder="e.g. None, or squeaking" value="None" />
+        </div>
+        </div>
       <button class="btn-main" id="analyzeBtn" onclick="analyzeVehicle()">
         Analyze Vehicle
       </button>
@@ -245,11 +278,16 @@
       resultCard.classList.remove("show");
       setAnalyzeLoading(true);
 
+      // Updated vehicle data object to map the new HTML inputs
       const vehicleData = {
         make: document.getElementById("make").value,
         model: document.getElementById("model").value,
         year: parseInt(document.getElementById("year").value),
         mileage: parseInt(document.getElementById("mileage").value),
+        engine_type: document.getElementById("engine").value,
+        transmission: document.getElementById("transmission").value,
+        driving_environment: document.getElementById("environment").value,
+        current_symptoms: document.getElementById("symptoms").value
       };
 
       try {

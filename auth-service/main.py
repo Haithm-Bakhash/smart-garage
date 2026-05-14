@@ -9,7 +9,7 @@ app = FastAPI(title="Auth Service - Secure Edition", description="Handles secure
 
 Instrumentator().instrument(app).expose(app)
 
-# Fetch the secret injected by our Kubernetes Secret!
+
 JWT_SECRET = os.getenv("JWT_SECRET", "fallback-insecure-secret")
 ALGORITHM = "HS256"
 
